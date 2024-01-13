@@ -1,18 +1,30 @@
 /* Escribe un programa en PHP, JS o Python que imprima una X construida a base de
 los símbolos /, \ y X (barra, contrabarra y letra X) y utilizar un doble espacio cuando
 no haya carácter. */
+function construirX(tamano) {
+    if (tamano === 0 || isNaN(tamano) || tamano == undefined) return "ERROR";
 
+    for (let i = 0; i < tamano; i++) {
+        let linea = '';
 
-function construirX(altura) {
-    if (altura === 0 || isNaN(altura) || altura == undefined) return "ERROR";
-
-    for (let fila = 1; fila <= altura; fila++) {
-        for (let columna = 0; columna <= altura; columna++) {
-            if (fila < columna) {
-                console.log("")
+        for (let j = 0; j < tamano; j++) {
+            if (i === j && i !== Math.floor(tamano / 2) && j !== Math.floor(tamano / 2)) {
+                // Línea diagonal principal (no en el centro)
+                linea += '\\';
+            } else if (i === Math.floor(tamano / 2) && j === Math.floor(tamano / 2)) {
+                // Centro de la "X"
+                linea += "X";
+            } else if (i + j === tamano - 1) {
+                // Línea diagonal secundaria
+                linea += '/';
+            } else {
+                // Espacio en blanco
+                linea += ' ';
             }
         }
+
+        console.log(linea);
     }
 }
 
-console.log(construirX(5))
+construirX(5)
