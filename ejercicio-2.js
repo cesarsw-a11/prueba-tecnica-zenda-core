@@ -10,25 +10,24 @@ El número más repetido de forma seguida es el 8, se repitió 3 veces.
 En el ejemplo, la secuencia más larga la tiene el número 8 con una secuencia
 de tres ochos seguidos. */
 
-let arreglo = [1,2,2,5,4,6,7,7,8,8,8,2];
-let elementosRepetidos = [];
-let resultado = {};
-let resultadoFinal = {};
+let arreglo = [1, 2, 2, 5, 4, 6, 7, 7, 8, 8, 8, 2];
+let dict = {}
+let numeroMasRepetido = arreglo[arreglo.length - 1];
+let contadorMasRepetido = 1;
 
-for (let i = 0; i < arreglo.length; i++) {
-    if(arreglo[i] == arreglo[i+1] || arreglo[i] == arreglo[i - 1]){
-        elementosRepetidos.push(arreglo[i])
+arreglo.map(val => {
+    if (!dict[val]) {
+        dict[val] = 1
+    } else {
+        dict[val]++
     }
-}
 
-elementosRepetidos.forEach(elemento => (resultado[elemento] = resultado[elemento] + 1 || 1 ))
-
-Object.entries(resultado).forEach((elemento) =>{
-    let maximo = elemento[1]
-
-    if(maximo < elemento[0]){
-        resultadoFinal = {numero : elemento[0], repetido: elemento[1]}
+    if (dict[val] > contadorMasRepetido) {
+        numeroMasRepetido = val;
+        contadorMasRepetido = dict[val];
     }
+
 })
+console.log(`El número más repetido de forma seguida es el ${numeroMasRepetido}, se repitió ${contadorMasRepetido} veces.`);
 
-console.log(resultadoFinal)
+console.log(dict)
