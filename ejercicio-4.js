@@ -1,53 +1,74 @@
-/* Genera un objeto que realice las siguientes acciones:
-1. Petición a la HTTP a la dirección (prueba.zendha.net) parámetro GET facturas
-y con su devolución:
-2. Genera un método para realizar cada una de las siguientes acciones:
-1. IVA total de los registros devueltos
-2. Cantidad vendida a cada receptor (teniendo en cuenta que estos pueden
-repetirse)
-3. Periodos de las fechas en las que hay facturas.
-4. Genera una función que al pasar el resultado de los puntos anteriores
-genere una tabla maquetada en FLEXBOX.
- */
-
-class Rendimientos {
-
-    getRendimientos() {
-        fetch("prueba.zendha.net")
-            .then(data => data.json())
-            .then(res => {
-                return res.data;
-            })
+class FacturasManager {
+    constructor() {
+      this.facturas = [];
     }
-
-    getTotalIVA() {
-        const registros = this.getRendimientos();
-        let sumaSubtotales = 0;
-        let IVA = 0;
-
-        registros.map((registro) => {
-            sumaSubtotales += registro.importe_subtotal;
-        });
-
-        IVA = (sumaSubtotales / 100) * 16;
-
-        return IVA;
+  
+    async obtenerFacturas() {
+      try {
+        const respuesta = await fetch('https://prueba.zendha.net/facturas');
+        const datos = await respuesta.json();
+        this.facturas = datos;
+      } catch (error) {
+        console.error('Error al obtener las facturas:', error);
+      }
     }
-
-    getCantidadVendida(){
-        const registros = this.getRendimientos();
-        let ventas = {};
-        registros.forEach(elemento => (ventas[elemento] = ventas[elemento] + 1 || 1 ))
-
-        return ventas;
+  
+    calcularIVATotal() {
+      const ivaTotal = this.facturas.reduce((total, factura) => total + factura.iva, 0);
+      console.log('IVA total de los registros devueltos:', ivaTotal);
+      return ivaTotal;
     }
-
-    getPeriodoFacturas(){
-        const registros = this.getRendimientos();
+  
+    calcularCantidadVendidaPorReceptor() {
+      const cantidadPorReceptor = {};
+  
+      this.facturas.forEach((factura) => {
+        const receptor = factura.receptor;
+  
+        if (!cantidadPorReceptor[receptor]) {
+          cantidadPorReceptor[receptor] = 0;
+        }
+  
+        cantidadPorReceptor[receptor] += factura.cantidad;
+      });
+  
+      console.log('Cantidad vendida a cada receptor:', cantidadPorReceptor);
+      return cantidadPorReceptor;
     }
-
-    generarTabla(){
-
+  
+    obtenerPeriodosDeFechas() {
+      const periodos = [];
+  
+      this.facturas.forEach((factura) => {
+        const fechaInicio = new Date(factura.fechaInicio);
+        const fechaFin = new Date(factura.fechaFin);
+  
+        const periodo = { inicio: fechaInicio, fin: fechaFin };
+        periodos.push(periodo);
+      });
+  
+      console.log('Periodos de las fechas en las que hay facturas:', periodos);
+      return periodos;
     }
-
-}
+  
+    generarTablaFlexbox(resultados) {
+      // Lógica para generar la tabla con Flexbox
+      // Puedes utilizar el DOM o bibliotecas de UI como React o Angular para construir la interfaz gráfica.
+    }
+  }
+  
+ // Ejemplo de uso
+async function ejecutar() {
+    const manager = new FacturasManager();
+    await manager.obtenerFacturas();
+  
+    const ivaTotal = manager.calcularIVATotal();
+    const cantidadPorReceptor = manager.calcularCantidadVendidaPorReceptor();
+    const periodos = manager.obtenerPeriodosDeFechas();
+  
+    // Luego puedes usar estos resultados para generar la tabla con Flexbox
+    manager.generarTablaFlexbox({ ivaTotal, cantidadPorReceptor, periodos });
+  }
+  
+  // Llama a la función ejecutar
+  ejecutar();
